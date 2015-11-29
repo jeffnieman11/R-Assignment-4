@@ -1,0 +1,77 @@
+#Jeff Nieman R Homework 4
+
+#Create a new data frame with the Forbes data found in the Vincent Arelbundock list.  
+forbesfile <- "https://raw.github.com/vincentarelbundock/Rdatasets/master/csv/HSAUR/Forbes2000.csv"
+forbes <- read.table (file = forbesfile, header = TRUE, sep=',') 
+
+#Test data frame
+head(forbes, 40)
+
+#Add new field "profitability defined by profits/sales
+forbes <- transform(forbes, profitability=profits/sales)
+head(forbes, 40)
+
+#Set up ggplot for the analysis
+
+require(ggplot2)
+
+# Create histogram for profits in the Forbes 2000 list
+
+h <- hist(forbes$profits)
+print(h)
+
+#Conclusion #1:  - most companies are between $0 and $5B in profits
+
+#Look at profitability
+h1 <- hist(forbes$profitability)
+print(h1)
+
+# Create scatter plot for sales vs. profits
+
+p <- plot(sales~profits, data=forbes)
+print(p)
+
+
+#Conclusion #2:  - generally profits go up as sales do - but there is no perfect trend.  Need to look at profitability vs. sales
+
+p1<- plot(sales~profitability,data=forbes)
+print(p1)
+
+#Conclusion #3:  - the companies with the highest sales seem to be in the middle of the profitablity distribution
+
+# Create box plot for profits
+
+b <- boxplot(forbes$profits)
+print(b)
+summary(forbes$profits)
+
+#Conclusion #4:  - nearly all of the first quartile loses money and all of the bottom 3 quartiles are under $0.44B in profits
+
+b1 <- boxplot(forbes$sales)
+print(b1)
+summary(forbes$sales)
+
+#Conclusion #5: - the spread of sales in the fourth quartile is massive - strong contrast to first 3
+
+#Build layered plot.  Wanted to create a way to look at 3 variables together.
+g<-ggplot(forbes, aes(x=sales, y=profits))
+g+geom_point(aes(color=assets))
+
+#Conclusion  #6: - no great surprise but the lower sales lower profit companies tend to have fewer assets
+
+# Add colors and test a few possibilities that are discrete non-numerical values
+g+geom_point(aes(color=category))
+
+g<-ggplot(forbes, aes(x=sales, y=profitability))
+g+geom_point(aes(color=category))
+
+g<-ggplot(forbes, aes(x=sales, y=profits))
+g+geom_point(aes(color=country))
+g<-ggplot(forbes, aes(x=sales, y=profitability))
+g+geom_point(aes(color=country))
+
+g<-ggplot(forbes, aes(x=country, y=profitability))
+g+geom_point(aes(color=assets))
+
+#Conclusion #7 - JApan and the UK seem to have a disproportionate amount of unprofitable companies on the list
+
